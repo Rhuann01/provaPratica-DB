@@ -1,40 +1,49 @@
--- MODELAGEM DO BANCO
+DROP TABLE IF EXISTS Matricula;
+DROP TABLE IF EXISTS Disciplina;
+DROP TABLE IF EXISTS Turma;
+DROP TABLE IF EXISTS Professor;
+DROP TABLE IF EXISTS Aluno;
+
+-- MODELAGEM DO BANCO (DDL)
 CREATE TABLE Aluno (
-id_aluno INT PRIMARY KEY,
-nome VARCHAR(100),
-matricula_cod VARCHAR(20) UNIQUE
+    id_aluno INT PRIMARY KEY,
+    nome VARCHAR(100),
+    matricula_cod VARCHAR(20) UNIQUE
 );
 
 CREATE TABLE Professor (
-id_professor INT PRIMARY KEY,
-nome VARCHAR(100)
+    id_professor INT PRIMARY KEY,
+    nome VARCHAR(100)
 );
 
 CREATE TABLE Turma (
-id_turma INT PRIMARY KEY,
-periodo_letivo VARCHAR(10),
-codigo_turma VARCHAR(20)
+    id_turma INT PRIMARY KEY,
+    periodo_letivo VARCHAR(10),
+    codigo_turma VARCHAR(20)
 );
 
 CREATE TABLE Disciplina (
-id_disciplina INT PRIMARY KEY,
-nome_disciplina VARCHAR(100),
-id_professor INT,
-id_turma INT,
-FOREIGN KEY (id_professor) REFERENCES Professor(id_professor),
-FOREIGN KEY (id_turma) REFERENCES Turma(id_turma)
+    id_disciplina INT PRIMARY KEY,
+    nome_disciplina VARCHAR(100),
+    id_professor INT,
+    id_turma INT,
+    FOREIGN KEY (id_professor) REFERENCES Professor(id_professor),
+    FOREIGN KEY (id_turma) REFERENCES Turma(id_turma)
 );
 
 CREATE TABLE Matricula (
-id_aluno INT,
-id_disciplina INT,
-nota_final DECIMAL(4,2),
-PRIMARY KEY (id_aluno, id_disciplina),
-FOREIGN KEY (id_aluno) REFERENCES Aluno(id_aluno),
-FOREIGN KEY (id_disciplina) REFERENCES Disciplina(id_disciplina)
+    id_aluno INT,
+    id_disciplina INT,
+    nota_final DECIMAL(4,2),
+    PRIMARY KEY (id_aluno, id_disciplina),
+    FOREIGN KEY (id_aluno) REFERENCES Aluno(id_aluno),
+    FOREIGN KEY (id_disciplina) REFERENCES Disciplina(id_disciplina)
 );
 
--- INSERTS
+-- OTIMIZAÇÃO (ÍNDICES)
+CREATE INDEX idx_aluno_nome ON Aluno(nome);
+
+-- INSERTS (DML)
 INSERT INTO Aluno (id_aluno, nome, matricula_cod) VALUES
 (1, 'João Silva', 'MAT001'),
 (2, 'Maria Santos', 'MAT002'),
@@ -66,12 +75,12 @@ INSERT INTO Matricula (id_aluno, id_disciplina, nota_final) VALUES
 (4, 203, 9.00),
 (4, 204, 8.20);
 
--- CONSULTA
+-- CONSULTA DE RELATÓRIO (DQL)
 SELECT
-A.nome AS Aluno,
-D.nome_disciplina AS Disciplina,
-P.nome AS Professor_Responsavel,
-M.nota_final AS Desempenho
+    A.nome AS Aluno,
+    D.nome_disciplina AS Disciplina,
+    P.nome AS Professor_Responsavel,
+    M.nota_final AS Desempenho
 FROM Aluno A
 JOIN Matricula M ON A.id_aluno = M.id_aluno
 JOIN Disciplina D ON M.id_disciplina = D.id_disciplina
